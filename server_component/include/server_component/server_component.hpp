@@ -15,7 +15,7 @@
 #ifndef COMPOSITION__SERVER_COMPONENT_HPP_
 #define COMPOSITION__SERVER_COMPONENT_HPP_
 
-#include "composition/visibility_control.h"
+#include "server_component/server_component_export.h"
 #include "example_interfaces/srv/add_two_ints.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -25,13 +25,12 @@ namespace composition
 class Server : public rclcpp::Node
 {
 public:
-  COMPOSITION_PUBLIC
-  explicit Server(const rclcpp::NodeOptions & options);
+  server_component_EXPORT explicit Server(const rclcpp::NodeOptions &options);
 
 private:
   rclcpp::Service<example_interfaces::srv::AddTwoInts>::SharedPtr srv_;
 };
 
-}  // namespace composition
+} // namespace composition
 
-#endif  // COMPOSITION__SERVER_COMPONENT_HPP_
+#endif // COMPOSITION__SERVER_COMPONENT_HPP_

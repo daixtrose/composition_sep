@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "composition/server_component.hpp"
+#include "server_component/server_component.hpp"
 
 #include <cinttypes>
 #include <iostream>
@@ -24,25 +24,23 @@
 namespace composition
 {
 
-Server::Server(const rclcpp::NodeOptions & options)
-: Node("Server", options)
+Server::Server(const rclcpp::NodeOptions &options)
+    : Node("Server", options)
 {
   auto handle_add_two_ints =
-    [this](
-    const std::shared_ptr<example_interfaces::srv::AddTwoInts::Request> request,
-    std::shared_ptr<example_interfaces::srv::AddTwoInts::Response> response
-    ) -> void
-    {
-      RCLCPP_INFO(this->get_logger(), "Incoming request: [a: %" PRId64 ", b: %" PRId64 "]",
-        request->a, request->b);
-      std::flush(std::cout);
-      response->sum = request->a + request->b;
-    };
+      [this](
+          const std::shared_ptr<example_interfaces::srv::AddTwoInts::Request> request,
+          std::shared_ptr<example_interfaces::srv::AddTwoInts::Response> response) -> void {
+    RCLCPP_INFO(this->get_logger(), "Incoming request: [a: %" PRId64 ", b: %" PRId64 "]",
+                request->a, request->b);
+    std::flush(std::cout);
+    response->sum = request->a + request->b;
+  };
 
   srv_ = create_service<example_interfaces::srv::AddTwoInts>("add_two_ints", handle_add_two_ints);
 }
 
-}  // namespace composition
+} // namespace composition
 
 #include "rclcpp_components/register_node_macro.hpp"
 

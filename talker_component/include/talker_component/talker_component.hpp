@@ -15,7 +15,7 @@
 #ifndef COMPOSITION__TALKER_COMPONENT_HPP_
 #define COMPOSITION__TALKER_COMPONENT_HPP_
 
-#include "composition/visibility_control.h"
+#include "talker_component/talker_component_export.h"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
@@ -25,8 +25,7 @@ namespace composition
 class Talker : public rclcpp::Node
 {
 public:
-  COMPOSITION_PUBLIC
-  explicit Talker(const rclcpp::NodeOptions & options);
+  talker_component_EXPORT explicit Talker(const rclcpp::NodeOptions &options);
 
 protected:
   void on_timer();
@@ -37,6 +36,6 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 };
 
-}  // namespace composition
+} // namespace composition
 
-#endif  // COMPOSITION__TALKER_COMPONENT_HPP_
+#endif // COMPOSITION__TALKER_COMPONENT_HPP_

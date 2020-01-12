@@ -14,8 +14,8 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 ################################################################################
 # Add libraries from subfolders
 
-add_subdirectory(client_component)
 add_subdirectory(listener_component)
+add_subdirectory(client_component)
 add_subdirectory(server_component)
 add_subdirectory(talker_component)
 
@@ -25,14 +25,15 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 add_executable(manual_composition
   src/manual_composition.cpp)
 
 target_link_libraries(manual_composition
-#  talker_component
-#  listener_component
-#  server_component
+  talker_component
+  listener_component
+  server_component
   client_component)
 
 ament_target_dependencies(manual_composition
