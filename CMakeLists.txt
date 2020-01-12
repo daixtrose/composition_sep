@@ -14,13 +14,10 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 ################################################################################
 # Add libraries from subfolders
 
-add_subdirectory(listener_component)
-add_subdirectory(client_component)
-add_subdirectory(server_component)
-add_subdirectory(talker_component)
-
-
-
+add_subdirectory(components/listener_component)
+add_subdirectory(components/client_component)
+add_subdirectory(components/server_component)
+add_subdirectory(components/talker_component)
 
 ################################################################################
 # search packages
