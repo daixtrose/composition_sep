@@ -12,7 +12,7 @@ endif()
 add_library(${PROJECT_NAME} SHARED 
     src/client_component.cpp)
 
-target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 ################################################################################
 # Warn and be pedantic

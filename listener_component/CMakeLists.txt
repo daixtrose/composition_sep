@@ -12,7 +12,7 @@ endif()
 add_library(${PROJECT_NAME} SHARED 
     src/listener_component.cpp)
 
-target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 ################################################################################
 # Warn and be pedantic
@@ -33,6 +33,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(std_msgs REQUIRED)
+
 
 ################################################################################
 # Generate the export macro header for symbol visibility/Windows DLL declspec
