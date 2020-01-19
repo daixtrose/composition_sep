@@ -72,9 +72,8 @@ ament_target_dependencies(${PROJECT_NAME}
 ################################################################################
 # Register the component
 
-rclcpp_components_register_nodes(${PROJECT_NAME} "composition::Client")
-
-set(node_plugins "${node_plugins}composition::Client;$<TARGET_FILE:${PROJECT_NAME}>\n")
+rclcpp_components_register_nodes(${PROJECT_NAME} "composition::Server")
+set(node_plugins "${node_plugins}composition::Server;$<TARGET_FILE:server_component>\n")
 
 ################################################################################
 # since the package installs libraries without exporting them
@@ -83,3 +82,9 @@ if(NOT WIN32)
   ament_environment_hooks(
     "${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH}")
 endif()
+
+install(TARGETS
+  ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)

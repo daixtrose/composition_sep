@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 project(client_component)
 
+################################################################################
+# Find some external dependicies
+
+find_package(ament_cmake REQUIRED)
+find_package(example_interfaces REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(rcutils REQUIRED)
+find_package(std_msgs REQUIRED)
+
 # Use GNUInstallDirs to install libraries into correct locations on all platforms.
 include(GNUInstallDirs)
 
@@ -24,15 +34,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         PUBLIC "$<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic>")
 endif()
 
-################################################################################
-# Find some external dependicies
-
-find_package(ament_cmake REQUIRED)
-find_package(example_interfaces REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclcpp_components REQUIRED)
-find_package(rcutils REQUIRED)
-find_package(std_msgs REQUIRED)
 
 ################################################################################
 # Generate the export macro header for symbol visibility/Windows DLL declspec
@@ -72,8 +73,7 @@ ament_target_dependencies(${PROJECT_NAME}
 # Register the component
 
 rclcpp_components_register_nodes(${PROJECT_NAME} "composition::Client")
-
-set(node_plugins "${node_plugins}composition::Client;$<TARGET_FILE:${PROJECT_NAME}>\n")
+set(node_plugins "${node_plugins}composition::Client;$<TARGET_FILE:client_component>\n")
 
 ################################################################################
 # since the package installs libraries without exporting them
@@ -83,4 +83,8 @@ if(NOT WIN32)
     "${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH}")
 endif()
 
-
+install(TARGETS
+  ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
