@@ -46,3 +46,11 @@ make
 export LD_LIBRARY_PATH=/opt/ros/eloquent/lib
 ./manual_composition
 ```
+
+## Package and Install
+
+```bash
+cpack
+sudo dpkg -i composition-1.0.0_amd64.deb
+/opt/composition-1.0.0/bin/manual_composition
+```
