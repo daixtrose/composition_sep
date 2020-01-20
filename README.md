@@ -31,8 +31,18 @@ export PATH=/snap/bin:$PATH
 ## Build
 
 ```bash
+export AMENT_CURRENT_PREFIX=/opt/ros/eloquent
+export AMENT_PREFIX_PATH=/opt/ros/eloquent
+export PYTHONPATH=/opt/ros/eloquent/lib/python3.6/site-packages
 mkdir build
 cd build
 cmake -DCMAKE_PREFIX_PATH=/opt/ros/eloquent ..
 make
+```
+
+## Run
+
+```bash
+export LD_LIBRARY_PATH=/opt/ros/eloquent/lib
+./manual_composition
 ```
