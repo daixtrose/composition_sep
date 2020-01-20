@@ -5,13 +5,19 @@ project(talker_component)
 # Use GNUInstallDirs to install libraries into correct locations on all platforms.
 include(GNUInstallDirs)
 
-# Default to C++20
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)
 endif()
 
 add_library(${PROJECT_NAME} SHARED 
     src/talker_component.cpp)
+
+set_target_properties(${PROJECT_NAME} 
+  PROPERTIES
+  BUILD_RPATH_USE_ORIGIN ON
+  INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib:/opt/ros/eloquent/lib"
+  BUILD_RPATH "$ORIGIN:$ORIGIN/../lib:/opt/ros/eloquent/lib"
+)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 

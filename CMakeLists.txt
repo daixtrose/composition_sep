@@ -4,9 +4,13 @@ cmake_minimum_required(VERSION 3.5)
 
 project(composition)
 
-# Default to C++20
+set(MAJOR_VERSION 1)
+set(MINOR_VERSION 0)
+set(PATCH_VERSION 0)
+
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 20)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -34,6 +38,9 @@ find_package(rcutils REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
+################################################################################
+# Add sanitizer utilities 
+include(CMakeSanitizers.cmake)
 
 ################################################################################
 # manual composition example
@@ -52,6 +59,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         PUBLIC "$<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic>")
 endif()
 
+target_sanitize(manual_composition)
+
 ################################################################################
 # add all component libraries 
 
@@ -63,20 +72,20 @@ set_target_properties(manual_composition
   PROPERTIES
   # CMAKE_BUILD_WITH_INSTALL_RPATH ON
   # CMAKE_INSTALL_RPATH_USE_LINK_PATH OFF
-  CMAKE_INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib:/opt/ros/eloquent/lib"
-  # CMAKE_BUILD_RPATH "$ORIGIN:$ORIGIN/../lib"
+  BUILD_RPATH_USE_ORIGIN ON
+  INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib:/opt/ros/eloquent/lib"
+  BUILD_RPATH "$ORIGIN:$ORIGIN/../lib:/opt/ros/eloquent/lib"
   )
 
-target_link_libraries(manual_composition
+target_link_libraries(manual_composition PUBLIC
   talker_component
   listener_component
   server_component
   client_component)
 
-ament_target_dependencies(manual_composition
+ament_target_dependencies(manual_composition PUBLIC
   "rclcpp"
   "geometry_msgs")
-
 
 ################################################################################
 # linktime composition example
@@ -111,9 +120,10 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     "-Wl,--as-needed")
 endif()
 
-target_link_libraries(linktime_composition ${libs})
+target_link_libraries(linktime_composition PUBLIC ${libs})
 
-ament_target_dependencies(linktime_composition
+ament_target_dependencies(linktime_composition 
+  PUBLIC 
   "class_loader"
   "rclcpp"
   "rclcpp_components"
@@ -126,15 +136,24 @@ ament_target_dependencies(linktime_composition
 add_executable(dlopen_composition
   src/dlopen_composition.cpp)
 
-ament_target_dependencies(dlopen_composition
+ament_target_dependencies(dlopen_composition PUBLIC
   "class_loader"
   "rclcpp"
   "rclcpp_components")
+
+################################################################################
+# Packaging configuration
+# Debian installer prefix propagated to CMakeCPackConfig
+set(DEB_INSTALL_PREFIX "/opt/${PROJECT_NAME}-${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}")
+configure_file(CMakeCPackConfig.cmake.in CMakeCPackConfig.cmake @ONLY)
+include(${CMAKE_SOURCE_DIR}/CMakeCPack.cmake)
 
 install(TARGETS
   manual_composition
   linktime_composition
   dlopen_composition
-  DESTINATION lib/${PROJECT_NAME})
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
 
 ament_package()
