@@ -2,38 +2,38 @@
 
 function(target_sanitize_clang theTarget)
     target_compile_options(${theTarget} PUBLIC
-        -fsanitize=undefined
-        -fsanitize=integer
-        -fsanitize=address
-        -fno-omit-frame-pointer
+        $<$<CONFIG:Debug>:-fsanitize=undefined>
+        $<$<CONFIG:Debug>:-fsanitize=integer>
+        $<$<CONFIG:Debug>:-fsanitize=address>
+        $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
         )
     target_link_libraries(${theTarget} PUBLIC
-        -fsanitize=address
+        $<$<CONFIG:Debug>:-fsanitize=address>
         )
 endfunction()
 
 function(target_sanitize_appleclang theTarget)
 target_compile_options(${theTarget} PUBLIC
-    -fsanitize=address
-    -fno-omit-frame-pointer
+    $<$<CONFIG:Debug>:-fsanitize=address>
+    $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
   )
 target_link_libraries(${theTarget} PUBLIC
-    -fsanitize=address
+    $<$<CONFIG:Debug>:-fsanitize=address>
   )
 endfunction()
 
 function(target_sanitize_gcc theTarget)
     if(NOT SCORE_COTIRE) ## Sanitizer won't work with PCHs
       target_compile_options(${theTarget} PUBLIC
-        -fsanitize=undefined
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -fuse-ld=gold
+        $<$<CONFIG:Debug>:-fsanitize=undefined>
+        $<$<CONFIG:Debug>:-fuse-ld=gold>
+        $<$<CONFIG:Debug>:-fsanitize=address>
+        $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
       )
       target_link_libraries(${theTarget} PUBLIC
-          -fsanitize=address
-          -fsanitize=undefined
-          -fuse-ld=gold
+      $<$<CONFIG:Debug>:-fsanitize=address>
+      $<$<CONFIG:Debug>:-fsanitize=undefined>
+      $<$<CONFIG:Debug>:-fuse-ld=gold>
       )
     endif()
 endfunction()
