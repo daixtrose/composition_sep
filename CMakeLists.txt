@@ -8,6 +8,8 @@ set(MAJOR_VERSION 1)
 set(MINOR_VERSION 0)
 set(PATCH_VERSION 0)
 
+# Probably better off with 
+# https://cmake.org/cmake/help/latest/manual/cmake-compile-features.7.html ?
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -54,9 +56,9 @@ add_executable(manual_composition
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(manual_composition 
-        PRIVATE "$<$<CONFIG:DEBUG>:-Wall -Wextra -Wpedantic>")
+        PRIVATE $<$<CONFIG:DEBUG>:-Wall -Wextra -Wpedantic>)
     target_compile_options(manual_composition 
-        PUBLIC "$<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic>")
+        PUBLIC $<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic>)
 endif()
 
 target_sanitize(manual_composition)
@@ -99,9 +101,9 @@ add_executable(linktime_composition
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 target_compile_options(linktime_composition 
-    PRIVATE "$<$<CONFIG:DEBUG>:-Wall -Wextra -Wpedantic>")
+    PRIVATE $<$<CONFIG:DEBUG>:-Wall -Wextra -Wpedantic>)
 target_compile_options(linktime_composition 
-    PUBLIC "$<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic>")
+    PUBLIC $<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic>)
 endif()
 
 ################################################################################

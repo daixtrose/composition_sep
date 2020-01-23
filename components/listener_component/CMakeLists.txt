@@ -25,9 +25,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/in
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(${PROJECT_NAME} 
-        PRIVATE "$<$<CONFIG:DEBUG>:-Wall -Wextra -Wpedantic>")
+        PRIVATE $<$<CONFIG:DEBUG>:-Wall -Wextra -Wpedantic>)
     target_compile_options(${PROJECT_NAME} 
-        PUBLIC "$<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic>")
+        PUBLIC $<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic>)
 endif()
 
 ################################################################################
