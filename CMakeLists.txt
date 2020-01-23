@@ -87,7 +87,8 @@ target_link_libraries(manual_composition PUBLIC
 
 ament_target_dependencies(manual_composition PUBLIC
   "rclcpp"
-  "geometry_msgs")
+  "geometry_msgs"
+  "std_msgs")
 
 ################################################################################
 # linktime composition example
@@ -157,5 +158,7 @@ install(TARGETS
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
+
+install(PROGRAMS src/start_manual_composition.sh DESTINATION bin)
 
 ament_package()
