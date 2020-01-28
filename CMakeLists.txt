@@ -29,35 +29,18 @@ FetchContent_Declare(
   # SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps     
 )
 
-FetchContent_MakeAvailable(rxcpp)
+FetchContent_GetProperties(rxcpp)
 
-target_compile_options(rxcpp
-  INTERFACE
-  -Wno-error=deprecated)
+if(NOT rxcpp_POPULATED)
+  # Fetch the content using previously declared details
+  FetchContent_Populate(rxcpp)
 
+  # Set custom variables, policies, etc.
+  # ...
 
-# FetchContent_GetProperties(rxcpp)
-
-# string(TOLOWER "rxcpp" lcName)
-# if(NOT ${lcName}_POPULATED)
-#   # Fetch the content using previously declared details
-#   FetchContent_Populate(rxcpp)
-
-#   # Bring the populated content into the build
-#   add_subdirectory(${${lcName}_SOURCE_DIR} ${${lcName}_BINARY_DIR})
-
-#   # Set custom variables, policies, etc.
-  
-
-# endif()
-
-
-
-# install(rxcpp
-#   ${PROJECT_NAME}
-#   ARCHIVE DESTINATION lib
-#   LIBRARY DESTINATION lib
-#   RUNTIME DESTINATION bin)
+  # Bring the populated content into the build
+  add_subdirectory(${rxcpp_SOURCE_DIR} ${rxcpp_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 
 ################################################################################
@@ -97,11 +80,15 @@ add_executable(manual_composition
 ################################################################################
 # Warn and be pedantic
 
+# target_compile_options(rxcpp
+#   INTERFACE
+#   -Wno-error=deprecated)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(manual_composition 
-        PRIVATE $<$<CONFIG:DEBUG>:-Wall -Wextra -Wpedantic>)
+        PRIVATE $<$<CONFIG:DEBUG>:-Wall -Wextra -Wpedantic -Werror -Wno-error=deprecated>)
     target_compile_options(manual_composition 
-        PUBLIC $<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic>)
+        PUBLIC $<$<CONFIG:RELEASE>:-Wall -Wextra -Wpedantic -Werror -Wno-error=deprecated>)
 endif()
 
 target_sanitize(manual_composition)
@@ -121,6 +108,9 @@ set_target_properties(manual_composition
   INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib:/opt/ros/eloquent/lib"
   BUILD_RPATH "$ORIGIN:$ORIGIN/../lib:/opt/ros/eloquent/lib"
   )
+
+target_include_directories(manual_composition 
+  BEFORE PUBLIC ${rxcpp_SOURCE_DIR}/Rx/v2/src)
 
 target_link_libraries(manual_composition PUBLIC
   rxcpp
