@@ -18,6 +18,49 @@ endif()
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ################################################################################
+# Populate external dependencies
+
+include(FetchContent)
+
+FetchContent_Declare(
+  rxcpp
+  GIT_REPOSITORY https://github.com/ReactiveX/RxCpp
+  GIT_TAG master
+  # SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps     
+)
+
+FetchContent_MakeAvailable(rxcpp)
+
+target_compile_options(rxcpp
+  INTERFACE
+  -Wno-error=deprecated)
+
+
+# FetchContent_GetProperties(rxcpp)
+
+# string(TOLOWER "rxcpp" lcName)
+# if(NOT ${lcName}_POPULATED)
+#   # Fetch the content using previously declared details
+#   FetchContent_Populate(rxcpp)
+
+#   # Bring the populated content into the build
+#   add_subdirectory(${${lcName}_SOURCE_DIR} ${${lcName}_BINARY_DIR})
+
+#   # Set custom variables, policies, etc.
+  
+
+# endif()
+
+
+
+# install(rxcpp
+#   ${PROJECT_NAME}
+#   ARCHIVE DESTINATION lib
+#   LIBRARY DESTINATION lib
+#   RUNTIME DESTINATION bin)
+
+
+################################################################################
 # create ament index resource which references the libraries 
 set(node_plugins "")
 
@@ -80,6 +123,7 @@ set_target_properties(manual_composition
   )
 
 target_link_libraries(manual_composition PUBLIC
+  rxcpp
   talker_component
   listener_component
   server_component
