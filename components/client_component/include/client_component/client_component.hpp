@@ -19,20 +19,18 @@
 #include "example_interfaces/srv/add_two_ints.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace composition
-{
+namespace composition {
 
-class Client : public rclcpp::Node
-{
+class Client : public rclcpp::Node {
 public:
-  client_component_EXPORT explicit Client(const rclcpp::NodeOptions &options);
+    client_component_EXPORT explicit Client(const rclcpp::NodeOptions& options);
 
 protected:
-  void on_timer();
+    void on_timer();
 
 private:
-  rclcpp::Client<example_interfaces::srv::AddTwoInts>::SharedPtr client_;
-  rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::Client<example_interfaces::srv::AddTwoInts>::SharedPtr client_;
+    rclcpp::TimerBase::SharedPtr timer_;
 };
 
 } // namespace composition

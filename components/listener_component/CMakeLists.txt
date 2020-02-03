@@ -40,6 +40,25 @@ find_package(rclcpp_components REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(std_msgs REQUIRED)
 
+################################################################################
+# Import external dependencies
+
+include(FetchContent)
+
+FetchContent_Declare(
+  rxcpp
+  GIT_REPOSITORY https://github.com/ReactiveX/RxCpp
+  GIT_TAG master
+)
+
+FetchContent_GetProperties(rxcpp)
+
+if(NOT rxcpp_POPULATED)
+  FetchContent_Populate(rxcpp)
+  add_subdirectory(${rxcpp_SOURCE_DIR} ${rxcpp_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
+
 
 ################################################################################
 # Generate the export macro header for symbol visibility/Windows DLL declspec
@@ -53,9 +72,11 @@ generate_export_header(${PROJECT_NAME}
     STATIC_DEFINE ITK_STATIC)
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
+    $<BUILD_INTERFACE:${rxcpp_SOURCE_DIR}/Rx/v2/src>  
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)  
-
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+    
 # This indicates we want to have the "export" label when building the library     
 target_compile_definitions(${PROJECT_NAME} PRIVATE "${PROJECT_NAME}_EXPORTS")
 

@@ -19,21 +19,20 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
-namespace composition
-{
+namespace composition {
 
-class NodeLikeListener
-{
+class NodeLikeListener {
 public:
-  node_like_listener_component_EXPORT explicit NodeLikeListener(const rclcpp::NodeOptions &options);
+    node_like_listener_component_EXPORT explicit NodeLikeListener(
+        const rclcpp::NodeOptions& options);
 
-  node_like_listener_component_EXPORT
-      rclcpp::node_interfaces::NodeBaseInterface::SharedPtr
-      get_node_base_interface() const;
+    node_like_listener_component_EXPORT
+        rclcpp::node_interfaces::NodeBaseInterface::SharedPtr
+        get_node_base_interface() const;
 
 private:
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
 };
 
 } // namespace composition

@@ -19,16 +19,15 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
-namespace composition
-{
+namespace composition {
 
-class Listener : public rclcpp::Node
-{
+class Listener : public rclcpp::Node {
 public:
-  listener_component_EXPORT explicit Listener(const rclcpp::NodeOptions &options);
+    listener_component_EXPORT explicit Listener(
+        const rclcpp::NodeOptions& options);
 
 private:
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
 };
 
 } // namespace composition

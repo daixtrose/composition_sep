@@ -15,20 +15,18 @@
 #ifndef COMPOSITION__SERVER_COMPONENT_HPP_
 #define COMPOSITION__SERVER_COMPONENT_HPP_
 
-#include "server_component/server_component_export.h"
 #include "example_interfaces/srv/add_two_ints.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "server_component/server_component_export.h"
 
-namespace composition
-{
+namespace composition {
 
-class Server : public rclcpp::Node
-{
+class Server : public rclcpp::Node {
 public:
-  server_component_EXPORT explicit Server(const rclcpp::NodeOptions &options);
+    server_component_EXPORT explicit Server(const rclcpp::NodeOptions& options);
 
 private:
-  rclcpp::Service<example_interfaces::srv::AddTwoInts>::SharedPtr srv_;
+    rclcpp::Service<example_interfaces::srv::AddTwoInts>::SharedPtr srv_;
 };
 
 } // namespace composition

@@ -18,7 +18,7 @@ endif()
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ################################################################################
-# Populate external dependencies
+# Import external dependencies
 
 include(FetchContent)
 
@@ -32,13 +32,7 @@ FetchContent_Declare(
 FetchContent_GetProperties(rxcpp)
 
 if(NOT rxcpp_POPULATED)
-  # Fetch the content using previously declared details
   FetchContent_Populate(rxcpp)
-
-  # Set custom variables, policies, etc.
-  # ...
-
-  # Bring the populated content into the build
   add_subdirectory(${rxcpp_SOURCE_DIR} ${rxcpp_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 

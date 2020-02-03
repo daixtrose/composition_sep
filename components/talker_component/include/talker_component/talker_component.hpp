@@ -15,25 +15,23 @@
 #ifndef COMPOSITION__TALKER_COMPONENT_HPP_
 #define COMPOSITION__TALKER_COMPONENT_HPP_
 
-#include "talker_component/talker_component_export.h"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "talker_component/talker_component_export.h"
 
-namespace composition
-{
+namespace composition {
 
-class Talker : public rclcpp::Node
-{
+class Talker : public rclcpp::Node {
 public:
-  talker_component_EXPORT explicit Talker(const rclcpp::NodeOptions &options);
+    talker_component_EXPORT explicit Talker(const rclcpp::NodeOptions& options);
 
 protected:
-  void on_timer();
+    void on_timer();
 
 private:
-  size_t count_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_;
-  rclcpp::TimerBase::SharedPtr timer_;
+    size_t count_;
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_;
+    rclcpp::TimerBase::SharedPtr timer_;
 };
 
 } // namespace composition
