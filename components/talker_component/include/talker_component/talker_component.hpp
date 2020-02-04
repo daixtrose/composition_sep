@@ -24,9 +24,10 @@ namespace composition {
 class Talker : public rclcpp::Node {
 public:
     talker_component_EXPORT explicit Talker(const rclcpp::NodeOptions& options);
+    void publish(std_msgs::msg::String s);
 
 protected:
-    void on_timer();
+    // void on_timer();
 
 private:
     size_t count_;

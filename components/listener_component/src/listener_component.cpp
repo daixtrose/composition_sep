@@ -28,23 +28,41 @@ namespace composition {
 // class. Components get built into shared libraries and as such do not write
 // their own main functions. The process using the component's shared library
 // will instantiate the class as a ROS node.
-Listener::Listener(const rclcpp::NodeOptions& options)
-    : Node("listener", options)
-{
-    // Create a callback function for when messages are received.
-    // Variations of this function also exist using, for example, UniquePtr for
-    // zero-copy transport.
-    auto callback
-        = [this](const typename std_msgs::msg::String::SharedPtr msg) -> void {
-        RCLCPP_INFO(this->get_logger(), "I heard: [%s]", msg->data.c_str());
-        std::flush(std::cout);
-    };
 
-    // Create a subscription to the "chatter" topic which can be matched with
-    // one or more compatible ROS publishers. Note that not all publishers on
-    // the same topic with the same type will be compatible: they must have
-    // compatible Quality of Service policies.
-    sub_ = create_subscription<std_msgs::msg::String>("chatter", 10, callback);
+// Listener::Listener(const rclcpp::NodeOptions& options)
+//     : Node("listener", options)
+// {
+//     // Create a callback function for when messages are received.
+//     // Variations of this function also exist using, for example, UniquePtr
+//     for
+//     // zero-copy transport.
+//     auto callback
+//         = [this](const typename std_msgs::msg::String::SharedPtr msg) -> void
+//         { RCLCPP_INFO(this->get_logger(), "I heard: [%s]",
+//         msg->data.c_str()); std::flush(std::cout);
+//     };
+
+//     // Create a subscription to the "chatter" topic which can be matched with
+//     // one or more compatible ROS publishers. Note that not all publishers on
+//     // the same topic with the same type will be compatible: they must have
+//     // compatible Quality of Service policies.
+//     sub_ = create_subscription<std_msgs::msg::String>("chatter", 10,
+//     callback);
+// }
+
+Listener::Listener(
+    const rclcpp::NodeOptions& options,
+    std::function<void(std_msgs::msg::String)> callback)
+    : Node("listener", options)
+    , sub_{ create_subscription<std_msgs::msg::String>(
+          "chatter",
+          rclcpp::QoS{ rclcpp::KeepLast(1), rmw_qos_profile_sensor_data },
+          [this, callback](const std::shared_ptr<std_msgs::msg::String> msg) {
+              RCLCPP_INFO(
+                  this->get_logger(), "I heard: [%s]", msg->data.c_str());
+              callback(*msg);
+          }) }
+{
 }
 
 } // namespace composition

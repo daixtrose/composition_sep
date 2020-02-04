@@ -30,28 +30,39 @@ namespace composition {
 // class. Components get built into shared libraries and as such do not write
 // their own main functions. The process using the component's shared library
 // will instantiate the class as a ROS node.
+// Talker::Talker(const rclcpp::NodeOptions& options)
+//     : Node("talker", options)
+//     , count_(0)
+// {
+//     // Create a publisher of "std_mgs/String" messages on the "chatter"
+//     topic. pub_ = create_publisher<std_msgs::msg::String>("chatter", 10);
+
+//     // Use a timer to schedule periodic message publishing.
+//     timer_ = create_wall_timer(1s, std::bind(&Talker::on_timer, this));
+// }
+
 Talker::Talker(const rclcpp::NodeOptions& options)
     : Node("talker", options)
-    , count_(0)
+    , pub_{ create_publisher<std_msgs::msg::String>(
+          "chatter",
+          // Prefer reponsiveness over completeness of data
+          rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_sensor_data)) }
 {
-    // Create a publisher of "std_mgs/String" messages on the "chatter" topic.
-    pub_ = create_publisher<std_msgs::msg::String>("chatter", 10);
-
-    // Use a timer to schedule periodic message publishing.
-    timer_ = create_wall_timer(1s, std::bind(&Talker::on_timer, this));
 }
 
-void Talker::on_timer()
-{
-    auto msg = std::make_unique<std_msgs::msg::String>();
-    msg->data = "Hello World: " + std::to_string(++count_);
-    RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", msg->data.c_str());
-    std::flush(std::cout);
+void Talker::publish(std_msgs::msg::String s) { pub_->publish(std::move(s)); }
 
-    // Put the message into a queue to be processed by the middleware.
-    // This call is non-blocking.
-    pub_->publish(std::move(msg));
-}
+// void Talker::on_timer()
+// {
+//     auto msg = std::make_unique<std_msgs::msg::String>();
+//     msg->data = "Hello World: " + std::to_string(++count_);
+//     RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", msg->data.c_str());
+//     std::flush(std::cout);
+
+//     // Put the message into a queue to be processed by the middleware.
+//     // This call is non-blocking.
+//     pub_->publish(std::move(msg));
+// }
 
 } // namespace composition
 

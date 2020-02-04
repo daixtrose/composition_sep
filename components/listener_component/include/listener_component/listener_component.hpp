@@ -19,12 +19,15 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
+#include <functional>
+
 namespace composition {
 
 class Listener : public rclcpp::Node {
 public:
     listener_component_EXPORT explicit Listener(
-        const rclcpp::NodeOptions& options);
+        const rclcpp::NodeOptions& options,
+        std::function<void(std_msgs::msg::String)> callback = [](auto s) {});
 
 private:
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;

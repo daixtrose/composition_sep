@@ -21,6 +21,10 @@
 #include "server_component/server_component.hpp"
 #include "talker_component/talker_component.hpp"
 
+#include <algorithm>
+#include <chrono>
+#include <thread>
+
 int main(int argc, char* argv[])
 {
     // Force flush of the stdout buffer.
@@ -43,18 +47,114 @@ int main(int argc, char* argv[])
     // subscription callback, or a timer callback.
     auto talker = std::make_shared<composition::Talker>(options);
     exec.add_node(talker);
-    auto listener = std::make_shared<composition::Listener>(options);
+
+    using string_t = std_msgs::msg::String;
+    std::vector<string_t> receivedMessages;
+
+    auto reaction = [&receivedMessages](auto msg) {
+        std::cerr << "Received " << msg.data;
+        std::cerr << " in thread " << std::this_thread::get_id() << std::endl;
+        receivedMessages.push_back(msg);
+    };
+
+    auto listener = std::make_shared<composition::Listener>(options, reaction);
     exec.add_node(listener);
-    auto server = std::make_shared<composition::Server>(options);
-    exec.add_node(server);
-    auto client = std::make_shared<composition::Client>(options);
-    exec.add_node(client);
 
-    // spin will block until work comes in, execute work as it becomes
-    // available, and keep blocking. It will only be interrupted by Ctrl-C.
-    exec.spin();
+    // Here we deviate from the toy example
+    std::thread t([&exec]() {
+        std::cerr << "Starting to spin" << std::endl;
+        exec.spin();
+    });
 
+    using namespace std::chrono_literals;
+    // std::this_thread::sleep_for(1s);
+
+    auto makeMsg = [](auto s) {
+        string_t result;
+        result.data = std::move(s);
+        return result;
+    };
+
+    std::vector<string_t> sentMessages
+        = { makeMsg("A"), makeMsg("B"), makeMsg("C") };
+
+    auto task = [&sentMessages, &talker]() {
+        for (auto const& msg : sentMessages) {
+            std::cerr << "Publishing " << msg.data;
+            std::cerr << " in thread " << std::this_thread::get_id()
+                      << std::endl;
+            talker->publish(msg);
+            std::this_thread::sleep_for(1ms);
+        }
+    };
+
+    std::thread t2(task);
+    std::this_thread::sleep_for(2s);
+
+    exec.cancel();
+    t.join();
+    t2.join();
     rclcpp::shutdown();
+
+    std::cerr << "receivedMessages = ";
+    for (auto msg : receivedMessages) {
+        std::cerr << msg.data << ", ";
+    }
 
     return 0;
 }
+
+/*
+    // register at the Rx interface of the listener
+    std::vector<string_t> receivedMessages;
+
+    auto reaction = [&receivedMessages](auto msg) {
+        std::cerr << "Received " << msg.data;
+        std::cerr << " in thread " << std::this_thread::get_id() << std::endl;
+        receivedMessages.push_back(msg);
+    };
+
+    auto subscription = listener->observable().subscribe(reaction);
+
+    std::cerr << "Starting to spin" << std::endl;
+    std::thread t([&exec]() { exec.spin(); });
+
+    auto makeMsg = [](auto s) {
+        string_t result;
+        result.data = std::move(s);
+        return result;
+    };
+
+    std::vector<string_t> sentMessages
+        = { makeMsg("A"), makeMsg("B"), makeMsg("C") };
+
+    using namespace std::chrono_literals;
+
+    auto task = [&sentMessages, &talker]() {
+        for (auto const& msg : sentMessages) {
+            std::cerr << "Publishing " << msg.data;
+            std::cerr << " in thread " << std::this_thread::get_id()
+                      << std::endl;
+            talker->publish(msg);
+            std::this_thread::sleep_for(1ms);
+        }
+    };
+
+    std::thread t2([&]() { task(); });
+    std::this_thread::sleep_for(2s);
+
+    // auto taskRepeater = duckbrain_ros2_utilities::makeTaskRepeater<string_t>(
+    //     "task_repeater", options, 1s, task);
+
+    // exec.add_node(taskRepeater);
+
+    // exec.spin();
+
+    exec.cancel();
+    t.join();
+    t2.join();
+    rclcpp::shutdown();
+
+    REQUIRE(receivedMessages == sentMessages);
+
+*/
